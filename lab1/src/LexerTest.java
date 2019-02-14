@@ -13,7 +13,7 @@ public class LexerTest {
     @Test
     public void getLexeme() {
         try {
-            StringReader reader = new StringReader("5+-4()*5676/");
+            StringReader reader = new StringReader("5+-4()*5676/^");
             Lexer lexer = new Lexer(reader);
             Lexeme lexeme1 = new Lexeme(LexemeType.NUMBER,"5");
             Lexeme lexeme2 = new Lexeme(LexemeType.PLUS, "+");
@@ -24,21 +24,23 @@ public class LexerTest {
             Lexeme lexeme7 = new Lexeme(LexemeType.MULTIPLICATION, "*");
             Lexeme lexeme8 = new Lexeme(LexemeType.NUMBER,"5676");
             Lexeme lexeme9 = new Lexeme(LexemeType.DIVISION,"/");
-            List<String> expected = new ArrayList<>();
+            Lexeme lexeme10 = new Lexeme(LexemeType.POWER, "^");
+            List<String> actual = new ArrayList<>();
             while(lexer.current != -1){
                 Lexeme lex = lexer.getLexeme();
-                expected.add(lex.text);
+                actual.add(lex.text);
             }
-            List<String> actual = new ArrayList<>();
-            actual.add(lexeme1.text);
-            actual.add(lexeme2.text);
-            actual.add(lexeme3.text);
-            actual.add(lexeme4.text);
-            actual.add(lexeme5.text);
-            actual.add(lexeme6.text);
-            actual.add(lexeme7.text);
-            actual.add(lexeme8.text);
-            actual.add(lexeme9.text);
+            List<String> expected = new ArrayList<>();
+            expected.add(lexeme1.text);
+            expected.add(lexeme2.text);
+            expected.add(lexeme3.text);
+            expected.add(lexeme4.text);
+            expected.add(lexeme5.text);
+            expected.add(lexeme6.text);
+            expected.add(lexeme7.text);
+            expected.add(lexeme8.text);
+            expected.add(lexeme9.text);
+            expected.add(lexeme10.text);
 
             Assert.assertEquals(expected, actual);
 
@@ -55,19 +57,37 @@ public class LexerTest {
             Lexeme lexeme2 = new Lexeme(LexemeType.PLUS, "+");
             Lexeme lexeme3 = new Lexeme(LexemeType.NUMBER,"4");
 
-            List<String> expected = new ArrayList<>();
+            List<String> actual = new ArrayList<>();
             while(lexer.current != -1){
                 Lexeme lex = lexer.getLexeme();
-                expected.add(lex.text);
+                actual.add(lex.text);
             }
-            List<String> actual = new ArrayList<>();
-            actual.add(lexeme1.text);
-            actual.add(lexeme2.text);
-            actual.add(lexeme3.text);
+            List<String> expected = new ArrayList<>();
+            expected.add(lexeme1.text);
+            expected.add(lexeme2.text);
+            expected.add(lexeme3.text);
             Assert.assertEquals(expected, actual);
 
         } catch (IOException | LexerException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void getLexemeWithWrongCharacter(){
+        Throwable caught = null;
+        try{
+            StringReader reader = new StringReader("+g");
+            Lexer lexer = new Lexer(reader);
+            List<String> actual = new ArrayList<>();
+            while(lexer.current != -1){
+                Lexeme lex = lexer.getLexeme();
+                actual.add(lex.text);
+            }}
+            catch (IOException | LexerException e) {
+            caught = e;
+        }
+        assertNotNull(caught);
+        assertSame(LexerException.class, caught.getClass());
     }
 }
